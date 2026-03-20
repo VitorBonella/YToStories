@@ -16,6 +16,16 @@
   - Typecheck passes with zero issues after adding the types
 ---
 
+## 2026-03-20 - US-004
+- Implemented fetchOEmbed utility in src/utils/oembed.ts
+- Calls YouTube oEmbed endpoint, returns typed OEmbedData, throws on non-200 or network failure
+- Files changed: src/utils/oembed.ts, src/utils/oembed.test.ts
+- **Learnings for future iterations:**
+  - Use `vi.stubGlobal('fetch', ...)` to mock global fetch in Vitest (no import needed)
+  - Call `vi.restoreAllMocks()` in beforeEach to avoid stub leakage between tests
+  - Wrap `fetch()` call in try/catch separately from response.ok check to distinguish network errors from HTTP errors
+---
+
 ## 2026-03-20 - US-003
 - Implemented extractVideoId utility in src/utils/youtube.ts
 - Handles youtube.com/watch?v=ID, youtu.be/ID, youtube.com/shorts/ID formats
