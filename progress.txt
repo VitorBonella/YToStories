@@ -26,6 +26,16 @@
   - Wrap `fetch()` call in try/catch separately from response.ok check to distinguish network errors from HTTP errors
 ---
 
+## 2026-03-20 - US-005
+- Implemented downloadCanvas utility in src/utils/download.ts
+- Accepts canvas, format ('png'|'jpeg'), and filename; triggers browser download via temporary <a> element
+- Files changed: src/utils/download.ts, src/utils/download.test.ts
+- **Learnings for future iterations:**
+  - Mock document.createElement with vi.spyOn — returns a plain object cast to HTMLElement; no jsdom canvas needed
+  - Avoid declaring unused variables — tsc flags them as errors (TS6133); remove the intermediate mimeType variable
+  - JPEG quality 0.92 is the spec requirement; pass it as the second arg to toDataURL
+---
+
 ## 2026-03-20 - US-003
 - Implemented extractVideoId utility in src/utils/youtube.ts
 - Handles youtube.com/watch?v=ID, youtu.be/ID, youtube.com/shorts/ID formats
