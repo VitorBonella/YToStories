@@ -104,3 +104,18 @@
   - To test components with a canvasRef prop, pass a plain object `{ current: canvas }` — no need for `useRef`
   - Remove unused imports in test files — tsc flags them as errors (TS6133)
 ---
+
+## 2026-03-20 - US-011
+- Implemented useStoryBuilder hook in src/hooks/useStoryBuilder.ts
+- Hook manages videoUrl, storyData, selectedTemplateId, isLoading, error state
+- handleSubmit calls extractVideoId then fetchOEmbed, maps OEmbedData to StoryData
+- handleTemplateChange updates selectedTemplateId
+- Updated App.tsx to compose all four components using useStoryBuilder; added loading spinner and error banner
+- Updated App.css with page-level layout using flexbox and gap; added spinner/error styles
+- Modified StoryPreview to accept optional external canvasRef prop (falls back to internal ref), allowing App to share one ref with DownloadBar
+- Files changed: src/hooks/useStoryBuilder.ts, src/hooks/useStoryBuilder.test.ts, src/App.tsx, src/App.css, src/components/StoryPreview/StoryPreview.tsx
+- **Learnings for future iterations:**
+  - To share a ref between StoryPreview and DownloadBar, pass canvasRef as an optional prop to StoryPreview and use `externalRef ?? internalRef` pattern
+  - `RefObject<HTMLCanvasElement | null>` cannot be assigned to JSX `ref` prop directly — cast with `as React.RefObject<HTMLCanvasElement>`
+  - `renderHook` + `act` from `@testing-library/react` is the standard way to test custom hooks in Vitest
+---
