@@ -1,0 +1,28 @@
+## Codebase Patterns
+- Types are in src/types/index.ts — import from there in all utilities and components
+- Vitest is used for testing (not Jest), configured in vitest.config.ts
+- Each component lives in its own directory under src/components/ with a co-located .css file
+- No inline styles allowed — all styles go in .css files
+
+---
+
+## 2026-03-20 - US-002
+- Implemented shared TypeScript type definitions in src/types/index.ts
+- Exported: OEmbedData, StoryData, Template interfaces
+- Files changed: src/types/index.ts
+- **Learnings for future iterations:**
+  - The types file was a placeholder (`export {}`), just needed filling in
+  - Template.render signature uses CanvasRenderingContext2D from the browser DOM lib — no extra imports needed
+  - Typecheck passes with zero issues after adding the types
+---
+
+## 2026-03-20 - US-003
+- Implemented extractVideoId utility in src/utils/youtube.ts
+- Handles youtube.com/watch?v=ID, youtu.be/ID, youtube.com/shorts/ID formats
+- Returns null for empty string, non-YouTube URLs, and malformed URLs
+- Files changed: src/utils/youtube.ts, src/utils/youtube.test.ts
+- **Learnings for future iterations:**
+  - URL parsing uses `new URL()` which throws on malformed input — wrap in try/catch
+  - Strip `www.` from hostname before matching to handle both www and non-www URLs
+  - `npm run build` serves as a quick typecheck (exits 0 with "ok (no errors)")
+---
