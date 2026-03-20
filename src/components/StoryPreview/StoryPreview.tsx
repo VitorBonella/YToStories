@@ -1,4 +1,5 @@
-import { useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
+import type { RefObject } from 'react';
 import type { StoryData } from '../../types';
 import { renderTemplate } from '../../utils/renderer';
 import './StoryPreview.css';
@@ -6,10 +7,12 @@ import './StoryPreview.css';
 interface StoryPreviewProps {
   storyData: StoryData | null;
   templateId: string;
+  canvasRef?: RefObject<HTMLCanvasElement | null>;
 }
 
-export function StoryPreview({ storyData, templateId }: StoryPreviewProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+export function StoryPreview({ storyData, templateId, canvasRef: externalRef }: StoryPreviewProps) {
+  const internalRef = useRef<HTMLCanvasElement>(null);
+  const canvasRef = externalRef ?? internalRef;
 
   useEffect(() => {
     if (!storyData || !canvasRef.current) return;
@@ -37,7 +40,7 @@ export function StoryPreview({ storyData, templateId }: StoryPreviewProps) {
   return (
     <div className="story-preview">
       <canvas
-        ref={canvasRef}
+        ref={canvasRef as React.RefObject<HTMLCanvasElement>}
         className="story-preview__canvas"
         width={1080}
         height={1920}

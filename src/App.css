@@ -2,4 +2,30 @@
   max-width: 800px;
   margin: 0 auto;
   padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.app__title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.app__spinner {
+  padding: 0.75rem 1rem;
+  background-color: #f0f4ff;
+  border-radius: 0.5rem;
+  color: #3b5bdb;
+  font-size: 0.9rem;
+}
+
+.app__error {
+  padding: 0.75rem 1rem;
+  background-color: #fff0f0;
+  border: 1px solid #ffc9c9;
+  border-radius: 0.5rem;
+  color: #c92a2a;
+  font-size: 0.9rem;
 }
