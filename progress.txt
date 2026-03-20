@@ -3,8 +3,9 @@
 - Vitest is used for testing (not Jest), configured in vitest.config.ts
 - Each component lives in its own directory under src/components/ with a co-located .css file
 - No inline styles allowed — all styles go in .css files
-- To mock `new Image()` in Vitest: use `vi.stubGlobal('Image', FakeImage)` with a class whose `src` setter synchronously calls `this.onload?.()`
+- To mock `new Image()` in Vitest: use `vi.stubGlobal('Image', FakeImage)` with a class whose `src` setter synchronously calls `this.onload?.()` — but set `img.onload` BEFORE `img.src` in the component, or the synchronous callback fires before the handler is registered
 - `<form>` elements need `aria-label` or `role="form"` to be queryable by `getByRole('form')` — prefer `input.closest('form')` for form submission in tests
+- Canvas `getContext('2d')` returns null in jsdom — mock with `vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(mockCtx)`
 
 ---
 
@@ -80,4 +81,15 @@
 - **Learnings for future iterations:**
   - `<form>` has no accessible "form" role unless it has an accessible name — use `input.closest('form')` in tests instead of `getByRole('form')`
   - React Testing Library's fireEvent.submit works on the form element directly
+---
+
+## 2026-03-20 - US-009
+- Implemented StoryPreview component in src/components/StoryPreview/StoryPreview.tsx
+- Renders 1080x1920 canvas, scaled to max-width: 270px via CSS; shows placeholder when storyData is null
+- Loads thumbnail with crossOrigin='anonymous' before calling renderTemplate; re-renders on storyData/templateId changes
+- Files changed: src/components/StoryPreview/StoryPreview.tsx, src/components/StoryPreview/StoryPreview.css, src/components/StoryPreview/StoryPreview.test.tsx
+- **Learnings for future iterations:**
+  - Must set `img.onload` BEFORE `img.src` — FakeImage's src setter calls onload synchronously, so setting src first means onload is still null
+  - `canvas.getContext('2d')` returns null in jsdom — use `vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(mockCtx)` in tests
+  - Mock the entire renderer module with `vi.mock('../../utils/renderer', ...)` to isolate canvas drawing from template logic
 ---
