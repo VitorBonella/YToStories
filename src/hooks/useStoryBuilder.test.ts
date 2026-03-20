@@ -37,9 +37,9 @@ describe('useStoryBuilder', () => {
   it('handleTemplateChange updates selectedTemplateId', () => {
     const { result } = renderHook(() => useStoryBuilder());
     act(() => {
-      result.current.handleTemplateChange('light');
+      result.current.handleTemplateChange('white');
     });
-    expect(result.current.selectedTemplateId).toBe('light');
+    expect(result.current.selectedTemplateId).toBe('white');
   });
 
   it('handleSubmit sets storyData on success', async () => {

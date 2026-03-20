@@ -11,21 +11,21 @@ describe('TemplateSelector', () => {
   });
 
   it('selected card has selected class', () => {
-    render(<TemplateSelector selectedId="light" onSelect={() => {}} />);
-    const selected = screen.getByRole('button', { name: 'Light' });
+    render(<TemplateSelector selectedId="white" onSelect={() => {}} />);
+    const selected = screen.getByRole('button', { name: 'White' });
     expect(selected).toHaveClass('template-selector__card--selected');
   });
 
   it('non-selected cards do not have selected class', () => {
     render(<TemplateSelector selectedId="dark" onSelect={() => {}} />);
-    const light = screen.getByRole('button', { name: 'Light' });
-    expect(light).not.toHaveClass('template-selector__card--selected');
+    const white = screen.getByRole('button', { name: 'White' });
+    expect(white).not.toHaveClass('template-selector__card--selected');
   });
 
   it('calls onSelect with template id when card is clicked', () => {
     const onSelect = vi.fn();
     render(<TemplateSelector selectedId="dark" onSelect={onSelect} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Gradient' }));
-    expect(onSelect).toHaveBeenCalledWith('gradient');
+    fireEvent.click(screen.getByRole('button', { name: 'Thumb' }));
+    expect(onSelect).toHaveBeenCalledWith('thumb');
   });
 });

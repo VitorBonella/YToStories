@@ -68,12 +68,12 @@ describe('StoryPreview', () => {
 
   it('calls renderTemplate with correct templateId', async () => {
     await act(async () => {
-      render(<StoryPreview storyData={storyData} templateId="light" />);
+      render(<StoryPreview storyData={storyData} templateId="white" />);
     });
     expect(mockRenderTemplate).toHaveBeenCalledWith(
       expect.anything(),
       storyData,
-      'light'
+      'white'
     );
   });
 
@@ -84,12 +84,12 @@ describe('StoryPreview', () => {
     await act(async () => {});
 
     await act(async () => {
-      rerender(<StoryPreview storyData={storyData} templateId="gradient" />);
+      rerender(<StoryPreview storyData={storyData} templateId="thumb" />);
     });
 
     const calls = mockRenderTemplate.mock.calls;
     const templateIds = calls.map((c) => c[2]);
-    expect(templateIds).toContain('gradient');
+    expect(templateIds).toContain('thumb');
   });
 
   it('sets crossOrigin to anonymous on the image', async () => {

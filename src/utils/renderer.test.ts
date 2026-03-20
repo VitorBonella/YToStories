@@ -14,11 +14,24 @@ function makeCtx() {
     fillStyle: '',
     font: '',
     textAlign: '',
+    textBaseline: '',
     filter: '',
+    shadowColor: '',
+    shadowBlur: 0,
+    shadowOffsetY: 0,
     fillRect: vi.fn(),
     drawImage: vi.fn(),
     fillText: vi.fn(),
+    measureText: vi.fn(() => ({ width: 100 })),
     beginPath: vi.fn(),
+    closePath: vi.fn(),
+    moveTo: vi.fn(),
+    lineTo: vi.fn(),
+    arcTo: vi.fn(),
+    arc: vi.fn(),
+    clip: vi.fn(),
+    save: vi.fn(),
+    restore: vi.fn(),
     roundRect: vi.fn(),
     fill: vi.fn(),
     createLinearGradient: vi.fn(() => ({
@@ -36,7 +49,6 @@ class FakeImage {
   onerror: (() => void) | null = null;
 
   set src(_val: string) {
-    // synchronously resolve
     this.onload?.();
   }
 
@@ -63,16 +75,16 @@ describe('renderTemplate', () => {
     expect(ctx.fillText).toHaveBeenCalled();
   });
 
-  it('light template calls drawImage and fillText', async () => {
+  it('white template calls drawImage and fillText', async () => {
     const ctx = makeCtx();
-    await renderTemplate(ctx, storyData, 'light');
+    await renderTemplate(ctx, storyData, 'white');
     expect(ctx.drawImage).toHaveBeenCalled();
     expect(ctx.fillText).toHaveBeenCalled();
   });
 
-  it('gradient template calls drawImage and fillText', async () => {
+  it('thumb template calls drawImage and fillText', async () => {
     const ctx = makeCtx();
-    await renderTemplate(ctx, storyData, 'gradient');
+    await renderTemplate(ctx, storyData, 'thumb');
     expect(ctx.drawImage).toHaveBeenCalled();
     expect(ctx.fillText).toHaveBeenCalled();
   });

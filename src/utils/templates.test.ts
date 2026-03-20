@@ -12,11 +12,11 @@ describe('TEMPLATES', () => {
     expect(unique.size).toBe(ids.length);
   });
 
-  it('contains ids: dark, light, gradient', () => {
+  it('contains ids: dark, white, thumb', () => {
     const ids = TEMPLATES.map((t) => t.id);
     expect(ids).toContain('dark');
-    expect(ids).toContain('light');
-    expect(ids).toContain('gradient');
+    expect(ids).toContain('white');
+    expect(ids).toContain('thumb');
   });
 
   it('each template has required fields: id, name, render', () => {
