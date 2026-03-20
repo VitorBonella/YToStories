@@ -59,6 +59,17 @@
   - `npm run build` serves as a quick typecheck (exits 0 with "ok (no errors)")
 ---
 
+## 2026-03-20 - US-008
+- Implemented TemplateSelector component in src/components/TemplateSelector/TemplateSelector.tsx
+- Renders one card per TEMPLATES entry, highlights selected card with CSS class
+- Clicking a card calls onSelect prop with template id
+- CSS in TemplateSelector.css — no inline styles; 9:16 aspect-ratio placeholder via `aspect-ratio` property
+- Files changed: src/components/TemplateSelector/TemplateSelector.tsx, src/components/TemplateSelector/TemplateSelector.css, src/components/TemplateSelector/TemplateSelector.test.tsx
+- **Learnings for future iterations:**
+  - Button accessible name comes from text content — no need for aria-label when the name spans is clear
+  - `aspect-ratio: 9 / 16` CSS property gives correct 9:16 placeholder without hardcoded height
+---
+
 ## 2026-03-20 - US-007
 - Implemented UrlInput component in src/components/UrlInput/UrlInput.tsx
 - Text input with Submit (disabled when empty) and Clear buttons
