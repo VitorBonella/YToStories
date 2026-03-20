@@ -1,0 +1,33 @@
+.template-selector {
+  display: flex;
+  gap: 1rem;
+}
+
+.template-selector__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.template-selector__card--selected {
+  border-color: #e00;
+  box-shadow: 0 0 0 2px #e00;
+}
+
+.template-selector__preview {
+  width: 60px;
+  aspect-ratio: 9 / 16;
+  background: #ddd;
+  border-radius: 3px;
+}
+
+.template-selector__name {
+  font-size: 0.875rem;
+  color: #333;
+}
