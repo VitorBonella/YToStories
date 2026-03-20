@@ -3,6 +3,7 @@
 - Vitest is used for testing (not Jest), configured in vitest.config.ts
 - Each component lives in its own directory under src/components/ with a co-located .css file
 - No inline styles allowed — all styles go in .css files
+- To mock `new Image()` in Vitest: use `vi.stubGlobal('Image', FakeImage)` with a class whose `src` setter synchronously calls `this.onload?.()`
 
 ---
 
@@ -34,6 +35,16 @@
   - Mock document.createElement with vi.spyOn — returns a plain object cast to HTMLElement; no jsdom canvas needed
   - Avoid declaring unused variables — tsc flags them as errors (TS6133); remove the intermediate mimeType variable
   - JPEG quality 0.92 is the spec requirement; pass it as the second arg to toDataURL
+---
+
+## 2026-03-20 - US-006
+- Implemented TEMPLATES constant in src/utils/templates.ts with three templates: dark, light, gradient
+- Implemented renderTemplate in src/utils/renderer.ts that delegates to the matching template by id
+- Files changed: src/utils/templates.ts, src/utils/renderer.ts, src/utils/templates.test.ts, src/utils/renderer.test.ts
+- **Learnings for future iterations:**
+  - Mock `new Image()` with `vi.stubGlobal('Image', FakeImage)` where the `src` setter synchronously calls `this.onload?.()` to avoid test timeouts
+  - ctx.createLinearGradient must be mocked to return an object with `addColorStop` — otherwise tests throw on undefined
+  - `ctx.roundRect` needs to be mocked for the light template's CTA badge
 ---
 
 ## 2026-03-20 - US-003
