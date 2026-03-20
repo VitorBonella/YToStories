@@ -1,0 +1,222 @@
+{
+  "project": "YToStories",
+  "branchName": "ralph/youtube-to-stories",
+  "description": "Frontend-only tool that converts a YouTube URL into a downloadable 1080x1920 Instagram Story image using the oEmbed API and Canvas API.",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Project scaffold",
+      "description": "As a developer, I need a Vite + TypeScript project with CSS files separated from components, Vitest configured with coverage, and a clean folder structure so the team has a solid foundation to build on.",
+      "acceptanceCriteria": [
+        "Vite project created with React + TypeScript template",
+        "Vitest configured with @vitest/coverage-v8, coverage threshold set to 80% in vitest.config.ts",
+        "src/ structure contains: components/, hooks/, utils/, types/",
+        "Each component directory contains a .tsx file and a co-located .css file — no inline styles",
+        "package.json scripts include: dev, build, test, coverage",
+        "npm run dev, npm run build, npm run test, and npm run coverage all exit without errors",
+        "Typecheck passes"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-002",
+      "title": "Types and shared type definitions",
+      "description": "As a developer, I need shared TypeScript types defined in one place so that all utility modules and components reference the same interfaces.",
+      "acceptanceCriteria": [
+        "src/types/index.ts exports OEmbedData interface with fields: title (string), author_name (string), thumbnail_url (string)",
+        "src/types/index.ts exports StoryData interface with fields: title (string), channelName (string), thumbnailUrl (string), videoId (string)",
+        "src/types/index.ts exports Template interface with fields: id (string), name (string), render (function signature: (ctx: CanvasRenderingContext2D, data: StoryData) => Promise<void>)",
+        "No runtime logic in types/index.ts — types only",
+        "Typecheck passes"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-003",
+      "title": "YouTube URL validation utility",
+      "description": "As a developer, I need an extractVideoId utility that parses a YouTube URL and returns the video ID so that other modules can rely on a validated ID.",
+      "acceptanceCriteria": [
+        "src/utils/youtube.ts exports extractVideoId(url: string): string | null",
+        "Returns the video ID for youtube.com/watch?v=ID format",
+        "Returns the video ID for youtu.be/ID format",
+        "Returns the video ID for youtube.com/shorts/ID format",
+        "Returns null for an empty string",
+        "Returns null for a non-YouTube URL",
+        "Returns null for a malformed URL",
+        "Unit tests in src/utils/youtube.test.ts cover all cases above",
+        "Typecheck passes"
+      ],
+      "priority": 3,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-004",
+      "title": "oEmbed metadata fetch utility",
+      "description": "As a developer, I need a fetchOEmbed utility that calls the YouTube oEmbed endpoint and returns typed metadata so that components can display video info without an API key.",
+      "acceptanceCriteria": [
+        "src/utils/oembed.ts exports fetchOEmbed(videoUrl: string): Promise<OEmbedData>",
+        "Calls https://www.youtube.com/oembed?url=<videoUrl>&format=json",
+        "Returns an OEmbedData object with title, author_name, and thumbnail_url on success",
+        "Throws an Error with a descriptive message on non-200 HTTP responses",
+        "Throws an Error with a descriptive message on network failure",
+        "Unit tests in src/utils/oembed.test.ts mock global fetch and cover: success response, 404 response, and network error",
+        "Typecheck passes"
+      ],
+      "priority": 4,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-005",
+      "title": "Download utility",
+      "description": "As a developer, I need a downloadCanvas utility that converts a canvas to a file and triggers a browser download so that users can save their Story image.",
+      "acceptanceCriteria": [
+        "src/utils/download.ts exports downloadCanvas(canvas: HTMLCanvasElement, format: 'png' | 'jpeg', filename: string): void",
+        "For format 'png', calls canvas.toDataURL('image/png')",
+        "For format 'jpeg', calls canvas.toDataURL('image/jpeg', 0.92)",
+        "Creates a temporary <a> element, sets href to the data URL, sets download attribute to filename, clicks it, and removes it",
+        "Unit tests in src/utils/download.test.ts mock canvas.toDataURL and document.createElement and assert correct MIME type and filename for both formats",
+        "Typecheck passes"
+      ],
+      "priority": 5,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-006",
+      "title": "Templates constant and render functions",
+      "description": "As a developer, I need a TEMPLATES constant that defines three visually distinct Story templates with their render functions so that the preview and selector components can use them.",
+      "acceptanceCriteria": [
+        "src/utils/templates.ts exports TEMPLATES as an array of Template objects",
+        "TEMPLATES contains exactly 3 entries with unique ids: 'dark', 'light', 'gradient'",
+        "Template 'dark': black background, thumbnail centered, title and channel overlaid at bottom with semi-transparent scrim",
+        "Template 'light': white background, thumbnail in upper half, title in dark text below, channel name in muted gray, 'Watch on YouTube' CTA badge",
+        "Template 'gradient': blurred thumbnail fills full 9:16 frame, fixed purple-to-black gradient overlay, title in bold white text centered",
+        "Each template's render function accepts (ctx: CanvasRenderingContext2D, data: StoryData) and returns Promise<void>",
+        "src/utils/renderer.ts exports renderTemplate(ctx: CanvasRenderingContext2D, data: StoryData, templateId: string): Promise<void> that delegates to the matching template's render function",
+        "Unit tests in src/utils/templates.test.ts verify all template IDs are unique and all required fields (id, name, render) are present",
+        "Unit tests in src/utils/renderer.test.ts mock the canvas context and assert drawImage and fillText are called for each template",
+        "Typecheck passes"
+      ],
+      "priority": 6,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-007",
+      "title": "UrlInput component",
+      "description": "As a user, I want to paste a YouTube URL into an input field with validation feedback and a clear button so that I know immediately if my URL is valid.",
+      "acceptanceCriteria": [
+        "src/components/UrlInput/UrlInput.tsx renders a text input, a Submit button, and a Clear button",
+        "Submit button is disabled when input is empty",
+        "Inline error message is shown below the input when the URL is invalid (on blur or on submit attempt)",
+        "Error message clears when the user modifies the input",
+        "Clicking Clear resets the input value and clears any error",
+        "onSubmit prop is called with the validated URL when a valid URL is submitted",
+        "Component CSS lives in src/components/UrlInput/UrlInput.css — no inline styles",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 7,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-008",
+      "title": "TemplateSelector component",
+      "description": "As a user, I want to see thumbnail previews of all available templates and click one to select it so that I can pick the style I prefer.",
+      "acceptanceCriteria": [
+        "src/components/TemplateSelector/TemplateSelector.tsx renders one preview card per template in TEMPLATES",
+        "Each card displays the template name and a small 9:16 aspect-ratio placeholder preview",
+        "The selected template's card has a visible highlight (border or ring)",
+        "Clicking a card calls the onSelect prop with the template id",
+        "Component CSS lives in src/components/TemplateSelector/TemplateSelector.css — no inline styles",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 8,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-009",
+      "title": "StoryPreview component with canvas rendering",
+      "description": "As a user, I want to see a live canvas preview of my Instagram Story rendered with the selected template so I can confirm it looks right before downloading.",
+      "acceptanceCriteria": [
+        "src/components/StoryPreview/StoryPreview.tsx renders a <canvas> element at 1080x1920 logical pixels",
+        "Canvas is visually scaled down via CSS to max-width: 270px while preserving 9:16 aspect ratio",
+        "When storyData and templateId props are provided, renderTemplate is called and the canvas updates",
+        "When storyData is null, a placeholder message is shown instead of the canvas",
+        "Re-renders when templateId prop changes",
+        "Thumbnail image is loaded with crossOrigin set to 'anonymous' before being drawn",
+        "Component CSS lives in src/components/StoryPreview/StoryPreview.css — no inline styles",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 9,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-010",
+      "title": "DownloadBar component",
+      "description": "As a user, I want two download buttons (PNG and JPEG) that are disabled until a preview is ready so that I can save my Story image in my preferred format.",
+      "acceptanceCriteria": [
+        "src/components/DownloadBar/DownloadBar.tsx renders 'Download PNG' and 'Download JPEG' buttons",
+        "Both buttons are disabled when the canvasRef prop has no current canvas element",
+        "Clicking 'Download PNG' calls downloadCanvas with format 'png' and filename yt-story-<videoId>.png",
+        "Clicking 'Download JPEG' calls downloadCanvas with format 'jpeg' and filename yt-story-<videoId>.jpeg",
+        "Component CSS lives in src/components/DownloadBar/DownloadBar.css — no inline styles",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 10,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-011",
+      "title": "App composition and useStoryBuilder hook",
+      "description": "As a user, I want all components wired together in a single-page app so that submitting a URL, selecting a template, previewing, and downloading all work end to end.",
+      "acceptanceCriteria": [
+        "src/hooks/useStoryBuilder.ts manages state: videoUrl, storyData, selectedTemplateId, isLoading, error",
+        "useStoryBuilder exposes handleSubmit(url) which calls fetchOEmbed and maps the result to StoryData",
+        "useStoryBuilder exposes handleTemplateChange(templateId) to update selectedTemplateId",
+        "src/App.tsx composes UrlInput, TemplateSelector, StoryPreview, and DownloadBar using useStoryBuilder",
+        "Loading spinner shown in App while isLoading is true",
+        "Error banner shown in App when error state is non-null",
+        "App.css contains page-level layout styles — no inline styles in App.tsx",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 11,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-012",
+      "title": "README with API documentation",
+      "description": "As a developer, I want a README that explains how to run the project and documents the public utility API so I can understand and extend the tool.",
+      "acceptanceCriteria": [
+        "README.md includes project overview section",
+        "README.md includes prerequisites (Node version, npm)",
+        "README.md includes install, dev, build, test, and coverage commands",
+        "README.md documents extractVideoId with signature, parameters, return value, and example",
+        "README.md documents fetchOEmbed with signature, parameters, return value, and example",
+        "README.md documents renderTemplate with signature, parameters, and example",
+        "README.md documents downloadCanvas with signature, parameters, and example",
+        "README.md includes a CORS note explaining crossOrigin='anonymous' workaround for canvas thumbnail drawing",
+        "README.md includes a screenshot placeholder (e.g., docs/screenshot.png path noted)",
+        "Typecheck passes"
+      ],
+      "priority": 12,
+      "passes": false,
+      "notes": ""
+    }
+  ]
+}

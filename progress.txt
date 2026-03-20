@@ -4,6 +4,7 @@
 - Each component lives in its own directory under src/components/ with a co-located .css file
 - No inline styles allowed — all styles go in .css files
 - To mock `new Image()` in Vitest: use `vi.stubGlobal('Image', FakeImage)` with a class whose `src` setter synchronously calls `this.onload?.()`
+- `<form>` elements need `aria-label` or `role="form"` to be queryable by `getByRole('form')` — prefer `input.closest('form')` for form submission in tests
 
 ---
 
@@ -56,4 +57,16 @@
   - URL parsing uses `new URL()` which throws on malformed input — wrap in try/catch
   - Strip `www.` from hostname before matching to handle both www and non-www URLs
   - `npm run build` serves as a quick typecheck (exits 0 with "ok (no errors)")
+---
+
+## 2026-03-20 - US-007
+- Implemented UrlInput component in src/components/UrlInput/UrlInput.tsx
+- Text input with Submit (disabled when empty) and Clear buttons
+- Validates URL on blur and on submit using extractVideoId; shows inline error message
+- Error clears when user types; calls onSubmit only on valid URL
+- CSS in UrlInput.css — no inline styles
+- Files changed: src/components/UrlInput/UrlInput.tsx, src/components/UrlInput/UrlInput.css, src/components/UrlInput/UrlInput.test.tsx
+- **Learnings for future iterations:**
+  - `<form>` has no accessible "form" role unless it has an accessible name — use `input.closest('form')` in tests instead of `getByRole('form')`
+  - React Testing Library's fireEvent.submit works on the form element directly
 ---
