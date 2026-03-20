@@ -1,0 +1,26 @@
+.story-preview {
+  display: flex;
+  justify-content: center;
+}
+
+.story-preview--empty {
+  align-items: center;
+  max-width: 270px;
+  aspect-ratio: 9 / 16;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+}
+
+.story-preview__placeholder {
+  color: #888;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 1rem;
+}
+
+.story-preview__canvas {
+  max-width: 270px;
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  border-radius: 8px;
+}

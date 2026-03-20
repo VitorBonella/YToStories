@@ -1,0 +1,133 @@
+## Codebase Patterns
+- Types are in src/types/index.ts — import from there in all utilities and components
+- Vitest is used for testing (not Jest), configured in vitest.config.ts
+- Each component lives in its own directory under src/components/ with a co-located .css file
+- No inline styles allowed — all styles go in .css files
+- To mock `new Image()` in Vitest: use `vi.stubGlobal('Image', FakeImage)` with a class whose `src` setter synchronously calls `this.onload?.()` — but set `img.onload` BEFORE `img.src` in the component, or the synchronous callback fires before the handler is registered
+- `<form>` elements need `aria-label` or `role="form"` to be queryable by `getByRole('form')` — prefer `input.closest('form')` for form submission in tests
+- Canvas `getContext('2d')` returns null in jsdom — mock with `vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(mockCtx)`
+
+---
+
+## 2026-03-20 - US-002
+- Implemented shared TypeScript type definitions in src/types/index.ts
+- Exported: OEmbedData, StoryData, Template interfaces
+- Files changed: src/types/index.ts
+- **Learnings for future iterations:**
+  - The types file was a placeholder (`export {}`), just needed filling in
+  - Template.render signature uses CanvasRenderingContext2D from the browser DOM lib — no extra imports needed
+  - Typecheck passes with zero issues after adding the types
+---
+
+## 2026-03-20 - US-004
+- Implemented fetchOEmbed utility in src/utils/oembed.ts
+- Calls YouTube oEmbed endpoint, returns typed OEmbedData, throws on non-200 or network failure
+- Files changed: src/utils/oembed.ts, src/utils/oembed.test.ts
+- **Learnings for future iterations:**
+  - Use `vi.stubGlobal('fetch', ...)` to mock global fetch in Vitest (no import needed)
+  - Call `vi.restoreAllMocks()` in beforeEach to avoid stub leakage between tests
+  - Wrap `fetch()` call in try/catch separately from response.ok check to distinguish network errors from HTTP errors
+---
+
+## 2026-03-20 - US-005
+- Implemented downloadCanvas utility in src/utils/download.ts
+- Accepts canvas, format ('png'|'jpeg'), and filename; triggers browser download via temporary <a> element
+- Files changed: src/utils/download.ts, src/utils/download.test.ts
+- **Learnings for future iterations:**
+  - Mock document.createElement with vi.spyOn — returns a plain object cast to HTMLElement; no jsdom canvas needed
+  - Avoid declaring unused variables — tsc flags them as errors (TS6133); remove the intermediate mimeType variable
+  - JPEG quality 0.92 is the spec requirement; pass it as the second arg to toDataURL
+---
+
+## 2026-03-20 - US-006
+- Implemented TEMPLATES constant in src/utils/templates.ts with three templates: dark, light, gradient
+- Implemented renderTemplate in src/utils/renderer.ts that delegates to the matching template by id
+- Files changed: src/utils/templates.ts, src/utils/renderer.ts, src/utils/templates.test.ts, src/utils/renderer.test.ts
+- **Learnings for future iterations:**
+  - Mock `new Image()` with `vi.stubGlobal('Image', FakeImage)` where the `src` setter synchronously calls `this.onload?.()` to avoid test timeouts
+  - ctx.createLinearGradient must be mocked to return an object with `addColorStop` — otherwise tests throw on undefined
+  - `ctx.roundRect` needs to be mocked for the light template's CTA badge
+---
+
+## 2026-03-20 - US-003
+- Implemented extractVideoId utility in src/utils/youtube.ts
+- Handles youtube.com/watch?v=ID, youtu.be/ID, youtube.com/shorts/ID formats
+- Returns null for empty string, non-YouTube URLs, and malformed URLs
+- Files changed: src/utils/youtube.ts, src/utils/youtube.test.ts
+- **Learnings for future iterations:**
+  - URL parsing uses `new URL()` which throws on malformed input — wrap in try/catch
+  - Strip `www.` from hostname before matching to handle both www and non-www URLs
+  - `npm run build` serves as a quick typecheck (exits 0 with "ok (no errors)")
+---
+
+## 2026-03-20 - US-008
+- Implemented TemplateSelector component in src/components/TemplateSelector/TemplateSelector.tsx
+- Renders one card per TEMPLATES entry, highlights selected card with CSS class
+- Clicking a card calls onSelect prop with template id
+- CSS in TemplateSelector.css — no inline styles; 9:16 aspect-ratio placeholder via `aspect-ratio` property
+- Files changed: src/components/TemplateSelector/TemplateSelector.tsx, src/components/TemplateSelector/TemplateSelector.css, src/components/TemplateSelector/TemplateSelector.test.tsx
+- **Learnings for future iterations:**
+  - Button accessible name comes from text content — no need for aria-label when the name spans is clear
+  - `aspect-ratio: 9 / 16` CSS property gives correct 9:16 placeholder without hardcoded height
+---
+
+## 2026-03-20 - US-007
+- Implemented UrlInput component in src/components/UrlInput/UrlInput.tsx
+- Text input with Submit (disabled when empty) and Clear buttons
+- Validates URL on blur and on submit using extractVideoId; shows inline error message
+- Error clears when user types; calls onSubmit only on valid URL
+- CSS in UrlInput.css — no inline styles
+- Files changed: src/components/UrlInput/UrlInput.tsx, src/components/UrlInput/UrlInput.css, src/components/UrlInput/UrlInput.test.tsx
+- **Learnings for future iterations:**
+  - `<form>` has no accessible "form" role unless it has an accessible name — use `input.closest('form')` in tests instead of `getByRole('form')`
+  - React Testing Library's fireEvent.submit works on the form element directly
+---
+
+## 2026-03-20 - US-009
+- Implemented StoryPreview component in src/components/StoryPreview/StoryPreview.tsx
+- Renders 1080x1920 canvas, scaled to max-width: 270px via CSS; shows placeholder when storyData is null
+- Loads thumbnail with crossOrigin='anonymous' before calling renderTemplate; re-renders on storyData/templateId changes
+- Files changed: src/components/StoryPreview/StoryPreview.tsx, src/components/StoryPreview/StoryPreview.css, src/components/StoryPreview/StoryPreview.test.tsx
+- **Learnings for future iterations:**
+  - Must set `img.onload` BEFORE `img.src` — FakeImage's src setter calls onload synchronously, so setting src first means onload is still null
+  - `canvas.getContext('2d')` returns null in jsdom — use `vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(mockCtx)` in tests
+  - Mock the entire renderer module with `vi.mock('../../utils/renderer', ...)` to isolate canvas drawing from template logic
+---
+
+## 2026-03-20 - US-010
+- Implemented DownloadBar component in src/components/DownloadBar/DownloadBar.tsx
+- Renders 'Download PNG' and 'Download JPEG' buttons; both disabled when canvasRef.current is null
+- Clicking each button calls downloadCanvas with the correct format and filename (yt-story-<videoId>.png/.jpeg)
+- CSS in DownloadBar.css — no inline styles
+- Files changed: src/components/DownloadBar/DownloadBar.tsx, src/components/DownloadBar/DownloadBar.css, src/components/DownloadBar/DownloadBar.test.tsx
+- **Learnings for future iterations:**
+  - To test components with a canvasRef prop, pass a plain object `{ current: canvas }` — no need for `useRef`
+  - Remove unused imports in test files — tsc flags them as errors (TS6133)
+---
+
+## 2026-03-20 - US-011
+- Implemented useStoryBuilder hook in src/hooks/useStoryBuilder.ts
+- Hook manages videoUrl, storyData, selectedTemplateId, isLoading, error state
+- handleSubmit calls extractVideoId then fetchOEmbed, maps OEmbedData to StoryData
+- handleTemplateChange updates selectedTemplateId
+- Updated App.tsx to compose all four components using useStoryBuilder; added loading spinner and error banner
+- Updated App.css with page-level layout using flexbox and gap; added spinner/error styles
+- Modified StoryPreview to accept optional external canvasRef prop (falls back to internal ref), allowing App to share one ref with DownloadBar
+- Files changed: src/hooks/useStoryBuilder.ts, src/hooks/useStoryBuilder.test.ts, src/App.tsx, src/App.css, src/components/StoryPreview/StoryPreview.tsx
+- **Learnings for future iterations:**
+  - To share a ref between StoryPreview and DownloadBar, pass canvasRef as an optional prop to StoryPreview and use `externalRef ?? internalRef` pattern
+  - `RefObject<HTMLCanvasElement | null>` cannot be assigned to JSX `ref` prop directly — cast with `as React.RefObject<HTMLCanvasElement>`
+  - `renderHook` + `act` from `@testing-library/react` is the standard way to test custom hooks in Vitest
+---
+
+## 2026-03-20 - US-012
+- Created README.md with project overview, prerequisites, install/dev/build/test/coverage commands
+- Documented all four public utilities: extractVideoId, fetchOEmbed, renderTemplate, downloadCanvas
+- Included signatures, parameter tables, return values, examples, and template ID reference table
+- Added CORS note explaining crossOrigin='anonymous' requirement for canvas thumbnail drawing
+- Added screenshot placeholder (docs/screenshot.png)
+- Files changed: README.md
+- **Learnings for future iterations:**
+  - README lives at the repo root (/workspaces/YToStories/README.md)
+  - Typecheck and tests pass with no code changes needed for a docs-only story
+---

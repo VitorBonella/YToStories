@@ -1,0 +1,134 @@
+.template-selector {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.template-selector__card {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  overflow: hidden;
+  background: transparent;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  width: 120px;
+}
+
+.template-selector__card--selected {
+  border-color: #ff0000;
+  box-shadow: 0 0 0 2px #ff0000;
+}
+
+.template-selector__card:not(.template-selector__card--selected):hover {
+  border-color: #bbb;
+}
+
+/* Thumbnail area — 16:9 */
+.template-selector__thumb {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  position: relative;
+}
+
+.template-selector__thumb-img {
+  width: 100%;
+  height: 100%;
+}
+
+/* Per-theme thumbnail colors */
+.template-selector__card--dark .template-selector__thumb {
+  background: #1e1e1e;
+}
+
+.template-selector__card--dark .template-selector__thumb-img {
+  background: linear-gradient(135deg, #333 0%, #555 50%, #333 100%);
+}
+
+.template-selector__card--white .template-selector__thumb {
+  background: #e0e0e0;
+}
+
+.template-selector__card--white .template-selector__thumb-img {
+  background: linear-gradient(135deg, #c8c8c8 0%, #e8e8e8 50%, #c8c8c8 100%);
+}
+
+.template-selector__card--thumb .template-selector__thumb {
+  background: #222;
+}
+
+.template-selector__card--thumb .template-selector__thumb-img {
+  background: linear-gradient(135deg, #3a2a4a 0%, #4a3a6a 50%, #2a1a3a 100%);
+  filter: blur(2px);
+  transform: scale(1.05);
+}
+
+/* Info area below thumbnail */
+.template-selector__info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px 8px 8px;
+}
+
+.template-selector__card--dark .template-selector__info {
+  background: #1e1e1e;
+}
+
+.template-selector__card--white .template-selector__info {
+  background: #ffffff;
+}
+
+.template-selector__card--thumb .template-selector__info {
+  background: #1a1a1a;
+}
+
+/* Fake title lines */
+.template-selector__title-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.template-selector__title-line {
+  height: 6px;
+  border-radius: 3px;
+}
+
+.template-selector__title-line--short {
+  width: 65%;
+}
+
+.template-selector__card--dark .template-selector__title-line {
+  background: #555;
+}
+
+.template-selector__card--white .template-selector__title-line {
+  background: #ccc;
+}
+
+.template-selector__card--thumb .template-selector__title-line {
+  background: #555;
+}
+
+/* Template name label */
+.template-selector__name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.template-selector__card--dark .template-selector__name {
+  color: #aaa;
+}
+
+.template-selector__card--white .template-selector__name {
+  color: #555;
+}
+
+.template-selector__card--thumb .template-selector__name {
+  color: #aaa;
+}
