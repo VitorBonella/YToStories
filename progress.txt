@@ -119,3 +119,15 @@
   - `RefObject<HTMLCanvasElement | null>` cannot be assigned to JSX `ref` prop directly — cast with `as React.RefObject<HTMLCanvasElement>`
   - `renderHook` + `act` from `@testing-library/react` is the standard way to test custom hooks in Vitest
 ---
+
+## 2026-03-20 - US-012
+- Created README.md with project overview, prerequisites, install/dev/build/test/coverage commands
+- Documented all four public utilities: extractVideoId, fetchOEmbed, renderTemplate, downloadCanvas
+- Included signatures, parameter tables, return values, examples, and template ID reference table
+- Added CORS note explaining crossOrigin='anonymous' requirement for canvas thumbnail drawing
+- Added screenshot placeholder (docs/screenshot.png)
+- Files changed: README.md
+- **Learnings for future iterations:**
+  - README lives at the repo root (/workspaces/YToStories/README.md)
+  - Typecheck and tests pass with no code changes needed for a docs-only story
+---
