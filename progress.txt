@@ -93,3 +93,14 @@
   - `canvas.getContext('2d')` returns null in jsdom — use `vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(mockCtx)` in tests
   - Mock the entire renderer module with `vi.mock('../../utils/renderer', ...)` to isolate canvas drawing from template logic
 ---
+
+## 2026-03-20 - US-010
+- Implemented DownloadBar component in src/components/DownloadBar/DownloadBar.tsx
+- Renders 'Download PNG' and 'Download JPEG' buttons; both disabled when canvasRef.current is null
+- Clicking each button calls downloadCanvas with the correct format and filename (yt-story-<videoId>.png/.jpeg)
+- CSS in DownloadBar.css — no inline styles
+- Files changed: src/components/DownloadBar/DownloadBar.tsx, src/components/DownloadBar/DownloadBar.css, src/components/DownloadBar/DownloadBar.test.tsx
+- **Learnings for future iterations:**
+  - To test components with a canvasRef prop, pass a plain object `{ current: canvas }` — no need for `useRef`
+  - Remove unused imports in test files — tsc flags them as errors (TS6133)
+---
